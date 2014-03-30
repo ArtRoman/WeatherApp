@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import ru.artroman.weatherapp.R;
+import ru.artroman.weatherapp.db.DB;
 
 public class AddCityDialog extends DialogFragment implements DialogInterface.OnClickListener, AdapterView.OnItemClickListener, TextWatcher {
 
@@ -32,7 +33,7 @@ public class AddCityDialog extends DialogFragment implements DialogInterface.OnC
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		cityNamesArray = getResources().getStringArray(R.array.cities_names);
+		cityNamesArray = new DB(activity).getAllCitiesAsArray();
 
 		// Verify that the host activity implements the callback interface
 		try {

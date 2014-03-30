@@ -27,10 +27,10 @@ public class MainContentFragment extends Fragment implements SwipeRefreshLayout.
 
 	}
 
-	public static MainContentFragment newInstance(int sectionNumber) {
+	public static MainContentFragment newInstance(long sectionNumber) {
 		MainContentFragment fragment = new MainContentFragment();
 		Bundle args = new Bundle();
-		args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+		args.putLong(ARG_SECTION_NUMBER, sectionNumber);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -43,7 +43,7 @@ public class MainContentFragment extends Fragment implements SwipeRefreshLayout.
 
 		TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 
-		int selectedPage = getArguments().getInt(ARG_SECTION_NUMBER);
+		long selectedPage = getArguments().getLong(ARG_SECTION_NUMBER);
 		String textToDisplay = "Selected chapter: " + selectedPage;
 		textView.setText(textToDisplay);
 
@@ -58,7 +58,7 @@ public class MainContentFragment extends Fragment implements SwipeRefreshLayout.
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		((StartActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+		((StartActivity) activity).onSectionAttached(getArguments().getLong(ARG_SECTION_NUMBER));
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class MainContentFragment extends Fragment implements SwipeRefreshLayout.
 
 		Toast.makeText(getActivity(), "Refreshing", Toast.LENGTH_SHORT).show();
 
-		if (mSwipeRefreshLayout != null) {
+		if (mSwipeRefreshLayout != null && !mSwipeRefreshLayout.isRefreshing()) {
 			mSwipeRefreshLayout.setRefreshing(true);
 		}
 

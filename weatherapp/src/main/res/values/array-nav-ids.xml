@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<integer-array name="default_navigation_ids">
+		<item>27612</item>
+		<item>26063</item>
+	</integer-array>
+</resources>

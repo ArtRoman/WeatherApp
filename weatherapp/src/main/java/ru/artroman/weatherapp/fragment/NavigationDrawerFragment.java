@@ -1,9 +1,9 @@
 package ru.artroman.weatherapp.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -21,9 +21,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import ru.artroman.weatherapp.R;
-import ru.artroman.weatherapp.adapter.NavigationDrawerListAdapter;
 import ru.artroman.weatherapp.db.DB;
 import ru.artroman.weatherapp.dialog.AddCityDialog;
 
@@ -38,11 +38,11 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 	private ActionBarDrawerToggle mDrawerToggle;
 
 	private DrawerLayout mDrawerLayout;
-	private ListView mDrawerListView;
 	private View mFragmentContainerView;
-	private NavigationDrawerListAdapter mAdapter;
+	private SimpleCursorAdapter mAdapter;
+	private DB mDbHelper;
 
-	private int mCurrentSelectedPosition;
+	private long mCurrentSelectedid;
 	private boolean mFromSavedInstanceState;
 	private boolean mUserLearnedDrawer;
 	private boolean isEditModeEnabled;
@@ -59,12 +59,13 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 		mUserLearnedDrawer = preferences.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
 		if (savedInstanceState != null) {
-			mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
+			mCurrentSelectedid = savedInstanceState.getInt(STATE_SELECTED_POSITION);
 			mFromSavedInstanceState = true;
 		}
 
 		// Select either the default item (0) or the last selected item.
-		selectItem(mCurrentSelectedPosition);
+		selectItem(mCurrentSelectedid);
+		mDbHelper = new DB(getActivity());
 	}
 
 	@Override
@@ -75,28 +76,29 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 	}
 
 	@Override
-	@SuppressWarnings("ConstantConditions")
+	@SuppressWarnings({"ConstantConditions", "deprecation"})
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		mDrawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+		ListView mDrawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
-		Context themedContext = getActionBar().getThemedContext();
-		mAdapter = new NavigationDrawerListAdapter(themedContext);
-		//mAdapter.setPageTitles(pageTitles);
+		String[] columns = new String[]{DB.CITIES_COLUMN_CITY_NAME};
+		int[] layoutIds = new int[]{R.id.navigation_item_text};
+		mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.navigation_drawer_list_item, mDbHelper.getAllNavigationCitiesCursor(), columns, layoutIds);
 		updateNavigationData();
 
 		mDrawerListView.setAdapter(mAdapter);
 		mDrawerListView.setOnItemClickListener(this);
-		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+		//mDrawerListView.setItemChecked(mCurrentSelectedid, true);
 		return mDrawerListView;
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		if (isEditModeEnabled) {
-			// TODO remove city from list, show dialog
-			alert("Deleting #" + (position + 1));
+			//TODO get city name, promt user
+			mAdapter.getItem(position);
+			removeCityFromNavigationDrawer(id);
 		} else {
-			selectItem(position);
+			selectItem(id);
 		}
 	}
 
@@ -167,16 +169,14 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 	}
 
-	private void selectItem(int position) {
-		mCurrentSelectedPosition = position;
-		if (mDrawerListView != null) {
-			mDrawerListView.setItemChecked(position, true);
-		}
+	private void selectItem(long id) {
+		mCurrentSelectedid = id;
+
 		if (mDrawerLayout != null) {
 			mDrawerLayout.closeDrawer(mFragmentContainerView);
 		}
 		if (mCallbacks != null) {
-			mCallbacks.onNavigationDrawerItemSelected(position);
+			mCallbacks.onNavigationDrawerItemSelected(id);
 		}
 	}
 
@@ -199,7 +199,7 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
+		outState.putLong(STATE_SELECTED_POSITION, mCurrentSelectedid);
 	}
 
 	@Override
@@ -231,7 +231,6 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 		int actionId = item.getItemId();
 		switch (actionId) {
 			case R.id.action_add_city:
-				// TODO show dalog to add city
 				DialogFragment dialog = new AddCityDialog();
 				dialog.show(getFragmentManager(), "AddCityDialog");
 				return true;
@@ -270,10 +269,19 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 		actionBar.setTitle(R.string.app_name);
 	}
 
+	public void addCityToBavigationDrawer(int cityId) {
+		mDbHelper.addCityToNavigation(cityId);
+		updateNavigationData();
+	}
+
+	public void removeCityFromNavigationDrawer(long id) {
+		mDbHelper.removeCityFromNavigation(id);
+		updateNavigationData();
+	}
+
 	public void updateNavigationData() {
-		DB dbHelper = new DB(getActivity());
-		String[] cityNames = dbHelper.getAllCitiesAsArray();
-		mAdapter.setPageTitles(cityNames);
+		Cursor newCursor = mDbHelper.getAllNavigationCitiesCursor();
+		mAdapter.changeCursor(newCursor);
 	}
 
 	private ActionBar getActionBar() {
@@ -288,7 +296,7 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 		/**
 		 * Called when an item in the navigation drawer is selected.
 		 */
-		void onNavigationDrawerItemSelected(int position);
+		void onNavigationDrawerItemSelected(long id);
 	}
 
 
