@@ -10,15 +10,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import ru.artroman.weatherapp.R;
+import ru.artroman.weatherapp.db.DB;
+import ru.artroman.weatherapp.dialog.AddCityDialog;
 import ru.artroman.weatherapp.fragment.MainContentFragment;
 import ru.artroman.weatherapp.fragment.NavigationDrawerFragment;
 
+import java.util.Arrays;
+import java.util.List;
 
-public class StartActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class StartActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, AddCityDialog.AddCityDialogListener {
 
 
 	private NavigationDrawerFragment mNavigationDrawerFragment;
 	private CharSequence mTitle;
+	private List<String> cityNamesList;
+	private int[] cityIdsArray;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,17 +47,7 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	}
 
 	public void onSectionAttached(int number) {
-		switch (number) {
-			case 1:
-				mTitle = getString(R.string.title_section1);
-				break;
-			case 2:
-				mTitle = getString(R.string.title_section2);
-				break;
-			case 3:
-				mTitle = getString(R.string.title_section3);
-				break;
-		}
+		mTitle = getString(R.string.app_name);
 	}
 
 
@@ -85,4 +81,46 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 		actionBar.setDisplayShowTitleEnabled(true);
 		actionBar.setTitle(mTitle);
 	}
+
+	/**
+	 * Dialog listener
+	 */
+	@Override
+	public void onDialogPositiveClick(AddCityDialog dialog, String inputTextValue) {
+
+		if (cityNamesList == null) cityNamesList = Arrays.asList(getResources().getStringArray(R.array.cities_names));
+		if (cityIdsArray == null) cityIdsArray = getResources().getIntArray(R.array.cities_ids);
+
+		int index = cityNamesList.indexOf(inputTextValue);
+		if (index < 0) {
+			alert(R.string.toast_not_found);
+		} else if (index < cityIdsArray.length) {
+			int cityId = cityIdsArray[index];
+			addCityToNavigationDrawer(cityId, inputTextValue);
+		}
+	}
+
+	@Override
+	public void onDialogNegativeClick(AddCityDialog dialog) {
+
+	}
+
+
+	private void addCityToNavigationDrawer(int cityId, String cityName) {
+
+		DB db = new DB(getApplication());
+		db.addCity(cityId, cityName);
+
+		mNavigationDrawerFragment.updateNavigationData();
+	}
+
+
+	private void alert(int resourceString) {
+		alert(getString(resourceString));
+	}
+
+	private void alert(String text) {
+		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+	}
+
 }

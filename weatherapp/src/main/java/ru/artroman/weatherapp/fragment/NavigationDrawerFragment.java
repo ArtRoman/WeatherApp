@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,6 +24,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 import ru.artroman.weatherapp.R;
 import ru.artroman.weatherapp.adapter.NavigationDrawerListAdapter;
+import ru.artroman.weatherapp.db.DB;
+import ru.artroman.weatherapp.dialog.AddCityDialog;
 
 
 public class NavigationDrawerFragment extends Fragment implements AdapterView.OnItemClickListener {
@@ -37,6 +40,7 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerListView;
 	private View mFragmentContainerView;
+	private NavigationDrawerListAdapter mAdapter;
 
 	private int mCurrentSelectedPosition;
 	private boolean mFromSavedInstanceState;
@@ -50,8 +54,7 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// Read in the flag indicating whether or not the user has demonstrated awareness of the
-		// drawer. See PREF_USER_LEARNED_DRAWER for details.
+		// Read in the flag indicating whether or not the user has demonstrated awareness of the drawer.
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		mUserLearnedDrawer = preferences.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
@@ -76,18 +79,12 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mDrawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
-		// TODO add real sections
-		String[] pageTitles = new String[]{
-				getString(R.string.title_section1),
-				getString(R.string.title_section2),
-				getString(R.string.title_section3),
-		};
-
 		Context themedContext = getActionBar().getThemedContext();
-		NavigationDrawerListAdapter adapter = new NavigationDrawerListAdapter(themedContext);
-		adapter.setPageTitles(pageTitles);
+		mAdapter = new NavigationDrawerListAdapter(themedContext);
+		//mAdapter.setPageTitles(pageTitles);
+		updateNavigationData();
 
-		mDrawerListView.setAdapter(adapter);
+		mDrawerListView.setAdapter(mAdapter);
 		mDrawerListView.setOnItemClickListener(this);
 		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 		return mDrawerListView;
@@ -97,7 +94,7 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		if (isEditModeEnabled) {
 			// TODO remove city from list, show dialog
-			Toast.makeText(getActivity(), "Really delete #" + position, Toast.LENGTH_SHORT).show();
+			alert("Deleting #" + (position + 1));
 		} else {
 			selectItem(position);
 		}
@@ -235,10 +232,14 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 		switch (actionId) {
 			case R.id.action_add_city:
 				// TODO show dalog to add city
+				DialogFragment dialog = new AddCityDialog();
+				dialog.show(getFragmentManager(), "AddCityDialog");
 				return true;
+
 			case R.id.action_edit:
 				changeEditMode(true);
 				return true;
+
 			case R.id.action_edit_done:
 				changeEditMode(false);
 				return true;
@@ -253,7 +254,7 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 	private void changeEditMode(boolean isEditEnabled) {
 		isEditModeEnabled = isEditEnabled;
 		if (isEditModeEnabled) {
-			Toast.makeText(getActivity(), R.string.navdrawer_select_to_delete, Toast.LENGTH_SHORT).show();
+			alert(R.string.navdrawer_select_to_delete);
 		}
 		getActivity().supportInvalidateOptionsMenu();
 	}
@@ -269,9 +270,16 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 		actionBar.setTitle(R.string.app_name);
 	}
 
+	public void updateNavigationData() {
+		DB dbHelper = new DB(getActivity());
+		String[] cityNames = dbHelper.getAllCitiesAsArray();
+		mAdapter.setPageTitles(cityNames);
+	}
+
 	private ActionBar getActionBar() {
 		return ((ActionBarActivity) getActivity()).getSupportActionBar();
 	}
+
 
 	/**
 	 * Callbacks interface that all activities using this fragment must implement.
@@ -281,5 +289,14 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 		 * Called when an item in the navigation drawer is selected.
 		 */
 		void onNavigationDrawerItemSelected(int position);
+	}
+
+
+	private void alert(int resourceString) {
+		alert(getString(resourceString));
+	}
+
+	private void alert(String text) {
+		Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
 	}
 }

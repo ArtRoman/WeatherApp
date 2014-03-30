@@ -3,10 +3,6 @@
 
 	<string name="app_name">WeatherApp</string>
 
-	<string name="title_section1">Section 1</string>
-	<string name="title_section2">Section 2</string>
-	<string name="title_section3">Section 3</string>
-
 	<string name="navigation_drawer_open">Open navigation drawer</string>
 	<string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -16,5 +12,10 @@
 	<string name="action_remove">Remove item</string>
 	<string name="action_edit_done">Done</string>
 	<string name="navdrawer_select_to_delete">Select item to delete</string>
+
+	<string name="dialog_add_city_title">Add city</string>
+	<string name="dialog_add_city_hint">Enter city name</string>
+
+	<string name="toast_not_found">City not found, try again</string>
 
 </resources>
