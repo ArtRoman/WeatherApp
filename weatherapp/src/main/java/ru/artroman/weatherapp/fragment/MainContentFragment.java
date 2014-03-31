@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import ru.artroman.weatherapp.R;
 import ru.artroman.weatherapp.activity.StartActivity;
+import ru.artroman.weatherapp.db.DB;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -27,10 +28,10 @@ public class MainContentFragment extends Fragment implements SwipeRefreshLayout.
 
 	}
 
-	public static MainContentFragment newInstance(long sectionNumber) {
+	public static MainContentFragment newInstance(int sectionNumber) {
 		MainContentFragment fragment = new MainContentFragment();
 		Bundle args = new Bundle();
-		args.putLong(ARG_SECTION_NUMBER, sectionNumber);
+		args.putInt(ARG_SECTION_NUMBER, sectionNumber);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -41,11 +42,14 @@ public class MainContentFragment extends Fragment implements SwipeRefreshLayout.
 		View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 		if (rootView == null) return null;
 
-		TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+		int navigationItemId = getArguments().getInt(ARG_SECTION_NUMBER);
 
-		long selectedPage = getArguments().getLong(ARG_SECTION_NUMBER);
-		String textToDisplay = "Selected chapter: " + selectedPage;
-		textView.setText(textToDisplay);
+		DB db = new DB(getActivity());
+		int cityId = db.getCityInNavigation(navigationItemId);
+		String cityName = db.getCityNameByCityId(cityId);
+
+		TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+		textView.setText("Selected item #" + navigationItemId + ", cityId=" + cityId + ", cityName=" + cityName);
 
 		// Refresh layout
 		mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_container);
@@ -58,7 +62,7 @@ public class MainContentFragment extends Fragment implements SwipeRefreshLayout.
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		((StartActivity) activity).onSectionAttached(getArguments().getLong(ARG_SECTION_NUMBER));
+		((StartActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
 	}
 
 	@Override

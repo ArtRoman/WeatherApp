@@ -35,11 +35,16 @@ public class DB {
 			NAVIGATION_COLUMN_CITY_ID + " integer" +
 			");";
 
-	private SQLiteDatabase mDB;
+	private static SQLiteDatabase mDB;
+	private static DBHelper mDBHelper;
 
 	public DB(Context context) {
-		DBHelper mDBHelper = new DBHelper(context, DB_NAME, null, DB_VERSION);
-		mDB = mDBHelper.getWritableDatabase();
+		if (mDBHelper == null) {
+			mDBHelper = new DBHelper(context, DB_NAME, null, DB_VERSION);
+		}
+		if (mDB == null) {
+			mDB = mDBHelper.getReadableDatabase();
+		}
 	}
 
 
@@ -97,16 +102,24 @@ public class DB {
 		return result;
 	}
 
-	/*public void setValueById(int id, String txt) {
-		ContentValues cv = new ContentValues();
-		cv.put(CITIES_COLUMN_CITY_ID, txt);
-		mDB.update(DB_TABLE_CITIES, cv, CITIES_COLUMN_ID + " = " + id, null);
-	}*/
 
 	public void addCityToNavigation(int cityId) {
 		ContentValues cv = new ContentValues();
 		cv.put(NAVIGATION_COLUMN_CITY_ID, cityId);
 		mDB.insert(DB_TABLE_NAVIGATION_CONTENT, null, cv);
+	}
+
+	public int getCityInNavigation(int navigationItemId) {
+		int cityId = -1;
+		String[] selectColumns = new String[]{NAVIGATION_COLUMN_CITY_ID};
+		String selection = NAVIGATION_COLUMN_ID + " = ?";
+		String[] selectionArgs = new String[]{String.valueOf(navigationItemId)};
+		Cursor cursor = mDB.query(DB_TABLE_NAVIGATION_CONTENT, selectColumns, selection, selectionArgs, null, null, null);
+		if (cursor.getCount() > 0) {
+			cursor.moveToFirst();
+			cityId = cursor.getInt(0);
+		}
+		return cityId;
 	}
 
 	public void removeCityFromNavigation(long id) {

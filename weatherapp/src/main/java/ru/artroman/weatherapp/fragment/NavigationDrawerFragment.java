@@ -1,11 +1,9 @@
 package ru.artroman.weatherapp.fragment;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -26,41 +24,47 @@ import android.widget.Toast;
 import ru.artroman.weatherapp.R;
 import ru.artroman.weatherapp.db.DB;
 import ru.artroman.weatherapp.dialog.AddCityDialog;
-
+import ru.artroman.weatherapp.dialog.PromtRemoveCityDialog;
+import ru.artroman.weatherapp.utils.PreferenceUtils;
 
 public class NavigationDrawerFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-
-	private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-	private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
+	private final static String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
+	private final static int DEFAULT_SECTION = 1;
 
 	private NavigationDrawerCallbacks mCallbacks;
 	private ActionBarDrawerToggle mDrawerToggle;
 
 	private DrawerLayout mDrawerLayout;
-	private View mFragmentContainerView;
 	private SimpleCursorAdapter mAdapter;
+	private PreferenceUtils mPreferenceUtils;
+	private View mFragmentContainerView;
 	private DB mDbHelper;
 
-	private long mCurrentSelectedid;
+	private int mCurrentSelectedid;
 	private boolean mFromSavedInstanceState;
 	private boolean mUserLearnedDrawer;
 	private boolean isEditModeEnabled;
 
 	public NavigationDrawerFragment() {
+
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		mPreferenceUtils = PreferenceUtils.getInstance(getActivity());
+
 		// Read in the flag indicating whether or not the user has demonstrated awareness of the drawer.
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		mUserLearnedDrawer = preferences.getBoolean(PREF_USER_LEARNED_DRAWER, false);
+		mUserLearnedDrawer = mPreferenceUtils.getValue(PreferenceUtils.PREF_USER_LEARNED_DRAWER, false);
+		int mLastCitySelected = mPreferenceUtils.getValue(PreferenceUtils.PREF_LAST_CITY_SELECTED, DEFAULT_SECTION);
 
 		if (savedInstanceState != null) {
 			mCurrentSelectedid = savedInstanceState.getInt(STATE_SELECTED_POSITION);
 			mFromSavedInstanceState = true;
+		} else {
+			mCurrentSelectedid = mLastCitySelected;
 		}
 
 		// Select either the default item (0) or the last selected item.
@@ -87,18 +91,16 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 
 		mDrawerListView.setAdapter(mAdapter);
 		mDrawerListView.setOnItemClickListener(this);
-		//mDrawerListView.setItemChecked(mCurrentSelectedid, true);
 		return mDrawerListView;
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		if (isEditModeEnabled) {
-			//TODO get city name, promt user
-			mAdapter.getItem(position);
-			removeCityFromNavigationDrawer(id);
+			PromtRemoveCityDialog dialog = new PromtRemoveCityDialog(id);
+			dialog.show(getFragmentManager(), "PromtRemoveCityDialog");
 		} else {
-			selectItem(id);
+			selectItem((int) id);
 		}
 	}
 
@@ -145,10 +147,8 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 				if (!mUserLearnedDrawer) {
 					// The user manually opened the drawer; store this flag to prevent auto-showing the navigation drawer automatically in the future.
 					mUserLearnedDrawer = true;
-					SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-					preferences.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
+					mPreferenceUtils.setValue(PreferenceUtils.PREF_USER_LEARNED_DRAWER, true);
 				}
-
 				getActivity().supportInvalidateOptionsMenu();
 			}
 		};
@@ -169,15 +169,15 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 	}
 
-	private void selectItem(long id) {
-		mCurrentSelectedid = id;
-
+	private void selectItem(int itemId) {
+		mCurrentSelectedid = itemId;
 		if (mDrawerLayout != null) {
 			mDrawerLayout.closeDrawer(mFragmentContainerView);
 		}
 		if (mCallbacks != null) {
-			mCallbacks.onNavigationDrawerItemSelected(id);
+			mCallbacks.onNavigationDrawerItemSelected(itemId);
 		}
+		mPreferenceUtils.setValue(PreferenceUtils.PREF_LAST_CITY_SELECTED, mCurrentSelectedid);
 	}
 
 	@Override
@@ -276,6 +276,7 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 
 	public void removeCityFromNavigationDrawer(long id) {
 		mDbHelper.removeCityFromNavigation(id);
+		alert("City removed");
 		updateNavigationData();
 	}
 
@@ -296,7 +297,7 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 		/**
 		 * Called when an item in the navigation drawer is selected.
 		 */
-		void onNavigationDrawerItemSelected(long id);
+		void onNavigationDrawerItemSelected(int itemId);
 	}
 
 

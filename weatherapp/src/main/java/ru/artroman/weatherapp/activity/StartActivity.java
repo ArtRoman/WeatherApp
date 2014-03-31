@@ -6,24 +6,22 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import ru.artroman.weatherapp.R;
 import ru.artroman.weatherapp.db.DB;
 import ru.artroman.weatherapp.dialog.AddCityDialog;
+import ru.artroman.weatherapp.dialog.PromtRemoveCityDialog;
 import ru.artroman.weatherapp.fragment.MainContentFragment;
 import ru.artroman.weatherapp.fragment.NavigationDrawerFragment;
 
-import java.util.List;
-
-public class StartActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, AddCityDialog.AddCityDialogListener {
-
+public class StartActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+		AddCityDialog.AddCityDialogListener, PromtRemoveCityDialog.PromtRemoveCityDialogListener {
 
 	private NavigationDrawerFragment mNavigationDrawerFragment;
 	private CharSequence mTitle;
-	private List<String> allCitiesNamesList;
-	private int[] allCitiesIdsArray;
 	private DB mDbHelper;
 
 	@Override
@@ -31,26 +29,35 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start);
 
-		mTitle = getTitle();
 		// Set up the drawer.
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
-		mDbHelper = new DB(this);
+		mTitle = getTitle();
+		mDbHelper = new DB(getApplication());
 	}
 
 	@Override
-	public void onNavigationDrawerItemSelected(long id) {
+	public void onNavigationDrawerItemSelected(int itemId) {
 		// Update the main content by replacing fragments
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction transaction = fragmentManager.beginTransaction();
-		transaction.replace(R.id.container, MainContentFragment.newInstance(id + 1));
+		transaction.replace(R.id.container, MainContentFragment.newInstance(itemId));
 		transaction.commit();
+		updateTitle(itemId);
 	}
 
+	public void onSectionAttached(int sectionId) {
+		updateTitle(sectionId);
+	}
 
-	public void onSectionAttached(long section) {
-		mTitle = getString(R.string.app_name);
+	private void updateTitle(int sectionId) {
+		if (mDbHelper == null) return;
+		int cityId = mDbHelper.getCityInNavigation(sectionId);
+		String cityName = mDbHelper.getCityNameByCityId(cityId);
+		if (!TextUtils.isEmpty(cityName)) {
+			mTitle = cityName;
+		}
 	}
 
 	/**
@@ -91,7 +98,7 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	public void onDialogPositiveClick(AddCityDialog dialog, String inputTextValue) {
 		int cityId = mDbHelper.getCityIdByCityName(inputTextValue);
 		if (cityId < 0) {
-			alert(R.string.toast_not_found);
+			alert(R.string.dialog_add_city_not_found);
 		} else {
 			mNavigationDrawerFragment.addCityToBavigationDrawer(cityId);
 		}
@@ -99,6 +106,16 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 
 	@Override
 	public void onDialogNegativeClick(AddCityDialog dialog) {
+
+	}
+
+	@Override
+	public void onDialogPositiveClick(PromtRemoveCityDialog dialog, long id) {
+		mNavigationDrawerFragment.removeCityFromNavigationDrawer(id);
+	}
+
+	@Override
+	public void onDialogNegativeClick(PromtRemoveCityDialog dialog) {
 
 	}
 
