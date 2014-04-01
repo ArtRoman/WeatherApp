@@ -16,13 +16,18 @@ import ru.artroman.weatherapp.dialog.AddCityDialog;
 import ru.artroman.weatherapp.dialog.PromtRemoveCityDialog;
 import ru.artroman.weatherapp.fragment.MainContentFragment;
 import ru.artroman.weatherapp.fragment.NavigationDrawerFragment;
+import ru.artroman.weatherapp.network.FileRetriever;
+
+import java.io.File;
 
 public class StartActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks,
-		AddCityDialog.AddCityDialogListener, PromtRemoveCityDialog.PromtRemoveCityDialogListener {
+		AddCityDialog.AddCityDialogListener, PromtRemoveCityDialog.PromtRemoveCityDialogListener, FileRetriever.OnDownloadCompleteListener {
 
 	private NavigationDrawerFragment mNavigationDrawerFragment;
 	private CharSequence mTitle;
 	private DB mDbHelper;
+	private OnRefreshListener mListener;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +45,11 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	@Override
 	public void onNavigationDrawerItemSelected(int itemId) {
 		// Update the main content by replacing fragments
+		MainContentFragment fragment = MainContentFragment.newInstance(itemId);
+		mListener = fragment;
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction transaction = fragmentManager.beginTransaction();
-		transaction.replace(R.id.container, MainContentFragment.newInstance(itemId));
+		transaction.replace(R.id.container, fragment);
 		transaction.commit();
 		updateTitle(itemId);
 	}
@@ -77,10 +84,9 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int actionId = item.getItemId();
 		if (actionId == R.id.action_refresh) {
-			Toast.makeText(this, R.string.action_refresh, Toast.LENGTH_SHORT).show();
+			mListener.onRefreshRequested();
 			return true;
 		}
-
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -92,13 +98,13 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	}
 
 	/**
-	 * Dialog listener
+	 * Dialogs listeners
 	 */
 	@Override
 	public void onDialogPositiveClick(AddCityDialog dialog, String inputTextValue) {
 		int cityId = mDbHelper.getCityIdByCityName(inputTextValue);
 		if (cityId < 0) {
-			alert(R.string.dialog_add_city_not_found);
+			Toast.makeText(this, R.string.dialog_add_city_not_found, Toast.LENGTH_SHORT).show();
 		} else {
 			mNavigationDrawerFragment.addCityToBavigationDrawer(cityId);
 		}
@@ -120,14 +126,28 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	}
 
 	/**
-	 * Helper functions
+	 * File downloading result
 	 */
-	private void alert(int resourceString) {
-		alert(getString(resourceString));
+	@Override
+	public void onDownloadSuccess(File downloadedFile) {
+		mListener.onRefreshCompleted();
+		//TODO decode data and update UI
+		Toast.makeText(getApplication(), "Downloaded " + (downloadedFile == null ? 0 : downloadedFile.length()) + "b of data", Toast.LENGTH_SHORT).show();
 	}
 
-	private void alert(String text) {
-		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+
+	@Override
+	public void onDownloadError(int errorMessageId) {
+		Toast.makeText(getApplication(), errorMessageId, Toast.LENGTH_SHORT).show();
+		mListener.onRefreshCompleted();
+	}
+
+
+	public interface OnRefreshListener {
+
+		void onRefreshRequested();
+
+		void onRefreshCompleted();
 	}
 
 }

@@ -12,14 +12,6 @@ import ru.artroman.weatherapp.db.DB;
 
 public class PromtRemoveCityDialog extends DialogFragment implements DialogInterface.OnClickListener {
 
-
-	public interface PromtRemoveCityDialogListener {
-
-		public void onDialogPositiveClick(PromtRemoveCityDialog dialog, long id);
-
-		public void onDialogNegativeClick(PromtRemoveCityDialog dialog);
-	}
-
 	private PromtRemoveCityDialogListener mListener;
 	private long navigationItemToRemove;
 	private String cityNameToRemove;
@@ -71,4 +63,10 @@ public class PromtRemoveCityDialog extends DialogFragment implements DialogInter
 	}
 
 
+	public interface PromtRemoveCityDialogListener {
+
+		public void onDialogPositiveClick(PromtRemoveCityDialog dialog, long id);
+
+		public void onDialogNegativeClick(PromtRemoveCityDialog dialog);
+	}
 }

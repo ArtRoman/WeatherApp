@@ -4,25 +4,26 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import ru.artroman.weatherapp.R;
 import ru.artroman.weatherapp.activity.StartActivity;
 import ru.artroman.weatherapp.db.DB;
+import ru.artroman.weatherapp.network.FileRetriever;
+import ru.artroman.weatherapp.utils.NetworkUtils;
 
 /**
- * A placeholder fragment containing a simple view.
+ * A fragment containing a simple view.
  */
-public class MainContentFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class MainContentFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, StartActivity.OnRefreshListener {
 
 	private static final String ARG_SECTION_NUMBER = "section_number";
 	private static SwipeRefreshLayout mSwipeRefreshLayout;
+	private int mSelectedCityId;
 
 	public MainContentFragment() {
 
@@ -47,13 +48,14 @@ public class MainContentFragment extends Fragment implements SwipeRefreshLayout.
 		DB db = new DB(getActivity());
 		int cityId = db.getCityInNavigation(navigationItemId);
 		String cityName = db.getCityNameByCityId(cityId);
+		mSelectedCityId = cityId;
 
 		TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 		textView.setText("Selected item #" + navigationItemId + ", cityId=" + cityId + ", cityName=" + cityName);
 
 		// Refresh layout
 		mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_container);
-		mSwipeRefreshLayout.setColorScheme(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light);
+		mSwipeRefreshLayout.setColorScheme(android.R.color.holo_green_light, android.R.color.holo_red_light, android.R.color.holo_blue_dark, android.R.color.holo_orange_dark);
 		mSwipeRefreshLayout.setOnRefreshListener(this);
 
 		return rootView;
@@ -65,24 +67,37 @@ public class MainContentFragment extends Fragment implements SwipeRefreshLayout.
 		((StartActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
 	}
 
+	/**
+	 * Refresh initiated from SwipeRefreshLayout
+	 */
 	@Override
 	public void onRefresh() {
-
-		Toast.makeText(getActivity(), "Refreshing", Toast.LENGTH_SHORT).show();
-
-		if (mSwipeRefreshLayout != null && !mSwipeRefreshLayout.isRefreshing()) {
-			mSwipeRefreshLayout.setRefreshing(true);
-		}
-
-		new Handler().postDelayed(stopRefreshDelayed, 2000);
+		initiateDownloadingContentForCurrentCityId();
 	}
 
-	private Runnable stopRefreshDelayed = new Runnable() {
-		@Override
-		public void run() {
-			if (mSwipeRefreshLayout != null) {
-				mSwipeRefreshLayout.setRefreshing(false);
-			}
-		}
-	};
+	/**
+	 * Refresh initiated from ActionBar
+	 */
+	@Override
+	public void onRefreshRequested() {
+		initiateDownloadingContentForCurrentCityId();
+	}
+
+	/**
+	 * Downloading completed, stop UI animation
+	 */
+	@Override
+	public void onRefreshCompleted() {
+		mSwipeRefreshLayout.setRefreshing(false);
+	}
+
+	void initiateDownloadingContentForCurrentCityId() {
+		mSwipeRefreshLayout.setRefreshing(true);
+
+		String url = NetworkUtils.getUrlForCityId(mSelectedCityId);
+		String outputFilePath = NetworkUtils.getCacheFilePathForUrl(getActivity(), url);
+		FileRetriever retriever = new FileRetriever(getActivity());
+		retriever.execute(url, outputFilePath);
+	}
+
 }

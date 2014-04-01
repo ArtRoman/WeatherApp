@@ -21,4 +21,11 @@
 	<string name="dialog_remove_city">Remove \'%1$s\' city?</string>
 	<string name="dialog_remove_city_toast_removed">City %1$s removed from list</string>
 
+	<string name="error_file_not_found_exception">File not found</string>
+	<string name="error_clien_protocol_exception">Connection error</string>
+	<string name="error_connect_timeout_exception">Connection time out</string>
+	<string name="error_unknown_host_exception">Host not found</string>
+	<string name="error_illegal_argument_exception">Invalid URL</string>
+	<string name="error_io_exception">Data read/write error</string>
+
 </resources>

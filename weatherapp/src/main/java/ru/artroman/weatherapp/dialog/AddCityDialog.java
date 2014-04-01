@@ -18,14 +18,6 @@ import ru.artroman.weatherapp.db.DB;
 
 public class AddCityDialog extends DialogFragment implements DialogInterface.OnClickListener, AdapterView.OnItemClickListener, TextWatcher {
 
-
-	public interface AddCityDialogListener {
-
-		public void onDialogPositiveClick(AddCityDialog dialog, String inputTextValue);
-
-		public void onDialogNegativeClick(AddCityDialog dialog);
-	}
-
 	private static String[] cityNamesArray;
 	private AddCityDialogListener mListener;
 	private String inputTextValue;
@@ -99,4 +91,11 @@ public class AddCityDialog extends DialogFragment implements DialogInterface.OnC
 		inputTextValue = editable.toString().trim();
 	}
 
+
+	public interface AddCityDialogListener {
+
+		public void onDialogPositiveClick(AddCityDialog dialog, String inputTextValue);
+
+		public void onDialogNegativeClick(AddCityDialog dialog);
+	}
 }
