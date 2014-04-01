@@ -1,16 +1,16 @@
 apply plugin: 'android'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.0.3'
+	compileSdkVersion 19
+	buildToolsVersion '19.0.3'
 
-    defaultConfig {
-        minSdkVersion 10
-        targetSdkVersion 19
-        versionCode 1
-        versionName "1.0"
-    }
-	lintOptions{
+	defaultConfig {
+		minSdkVersion 10
+		targetSdkVersion 19
+		versionCode 1
+		versionName "1.0"
+	}
+	lintOptions {
 		checkReleaseBuilds false
 	}
 	buildTypes {
@@ -31,7 +31,12 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:19.1.0'
-    compile 'com.android.support:support-v4:19.1.0'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+	compile 'com.android.support:appcompat-v7:19.1.0'
+	compile 'com.android.support:support-v4:19.1.0'
+	compile('org.simpleframework:simple-xml:2.7.1') {
+		exclude module: 'stax'
+		exclude module: 'stax-api'
+		exclude module: 'xpp3'
+	}
+	compile fileTree(dir: 'libs', include: ['*.jar'])
 }

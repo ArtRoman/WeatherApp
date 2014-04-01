@@ -15,11 +15,12 @@ import ru.artroman.weatherapp.activity.StartActivity;
 import ru.artroman.weatherapp.db.DB;
 import ru.artroman.weatherapp.network.FileRetriever;
 import ru.artroman.weatherapp.utils.NetworkUtils;
+import ru.yandex.weather.forecast.Forecast;
 
 /**
  * A fragment containing a simple view.
  */
-public class MainContentFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, StartActivity.OnRefreshListener {
+public class MainContentFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, StartActivity.OnDataUpdateListener {
 
 	private static final String ARG_SECTION_NUMBER = "section_number";
 	private static SwipeRefreshLayout mSwipeRefreshLayout;
@@ -79,17 +80,23 @@ public class MainContentFragment extends Fragment implements SwipeRefreshLayout.
 	 * Refresh initiated from ActionBar
 	 */
 	@Override
-	public void onRefreshRequested() {
+	public void onDataUpdateRequested() {
 		initiateDownloadingContentForCurrentCityId();
 	}
 
 	/**
-	 * Downloading completed, stop UI animation
+	 * Downloading completed, stop UI animation, update UI
 	 */
 	@Override
-	public void onRefreshCompleted() {
+	public void onDataUpdateCompleted(Forecast forecastData) {
 		mSwipeRefreshLayout.setRefreshing(false);
+
+		if (forecastData == null) return;
+
+		//TODO update UI
+
 	}
+
 
 	void initiateDownloadingContentForCurrentCityId() {
 		mSwipeRefreshLayout.setRefreshing(true);

@@ -26,7 +26,7 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	private NavigationDrawerFragment mNavigationDrawerFragment;
 	private CharSequence mTitle;
 	private DB mDbHelper;
-	private OnRefreshListener mListener;
+	private OnDataUpdateListener mListener;
 
 
 	@Override
@@ -84,7 +84,7 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int actionId = item.getItemId();
 		if (actionId == R.id.action_refresh) {
-			mListener.onRefreshRequested();
+			mListener.onDataUpdateRequested();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -130,24 +130,25 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	 */
 	@Override
 	public void onDownloadSuccess(File downloadedFile) {
-		mListener.onRefreshCompleted();
-		//TODO decode data and update UI
-		Toast.makeText(getApplication(), "Downloaded " + (downloadedFile == null ? 0 : downloadedFile.length()) + "b of data", Toast.LENGTH_SHORT).show();
+		pushForecastDataToFragment();
 	}
-
 
 	@Override
 	public void onDownloadError(int errorMessageId) {
 		Toast.makeText(getApplication(), errorMessageId, Toast.LENGTH_SHORT).show();
-		mListener.onRefreshCompleted();
+		mListener.onDataUpdateCompleted();
+	}
+
+	private void pushForecastDataToFragment() {
+		mListener.onDataUpdateCompleted();
 	}
 
 
-	public interface OnRefreshListener {
+	public interface OnDataUpdateListener {
 
-		void onRefreshRequested();
+		void onDataUpdateRequested();
 
-		void onRefreshCompleted();
+		void onDataUpdateCompleted();
 	}
 
 }

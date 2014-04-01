@@ -2,7 +2,6 @@ package ru.artroman.weatherapp.utils;
 
 import android.app.Activity;
 import android.net.Uri;
-import android.os.Environment;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -21,15 +20,16 @@ public class NetworkUtils {
 	 * @param url      Url to parse
 	 */
 	public static String getCacheFilePathForUrl(Activity activity, String url) {
-		File cacheFolder = Environment.getExternalStorageDirectory();
-		//File cacheFolder =  activity.getFilesDir();
+		String cacheFilePath;
+		File cacheFolder = activity.getFilesDir();
+		if (cacheFolder == null) return null;
 		String fileName = Uri.parse(url).getLastPathSegment();
-		String cacheFilePath = cacheFolder.getAbsolutePath() + File.separator + fileName;
+		cacheFilePath = cacheFolder.getAbsolutePath() + File.separator + fileName;
 
 		return cacheFilePath;
 	}
 
-	public static String getUrlForCityId(int cityId){
+	public static String getUrlForCityId(int cityId) {
 		return String.format(HTTP_ADDRESS_TEMPLATE, cityId);
 	}
 

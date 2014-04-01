@@ -2,7 +2,9 @@ package ru.artroman.weatherapp.network;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
@@ -31,6 +33,8 @@ public class FileRetriever extends AsyncTask<String, Integer, File> {
 	private final static int HTTP_CONNECTION_TIMEOUT_MS = 5000;
 	private final static String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
 	private final static String HEADER_ENCODING_TYPE_GZIP = "gzip";
+	private final static String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
+	private final static String HEADER_LANGUAGE_TYPE_RU = "ru-RU,ru";
 
 	private final static int PARAM_URL = 0;
 	private final static int PARAM_FILE_PATH = 1;
@@ -67,10 +71,12 @@ public class FileRetriever extends AsyncTask<String, Integer, File> {
 			HttpConnectionParams.setConnectionTimeout(httpParams, HTTP_CONNECTION_TIMEOUT_MS);
 			httpGet.setParams(httpParams);
 			httpGet.addHeader(HEADER_ACCEPT_ENCODING, HEADER_ENCODING_TYPE_GZIP);
+			httpGet.addHeader(HEADER_ACCEPT_LANGUAGE, HEADER_LANGUAGE_TYPE_RU);
 
 			DefaultHttpClient http = new DefaultHttpClient();
 			HttpResponse response = http.execute(httpGet);
 			HttpEntity entity = response.getEntity();
+			Header responseContentEncodingHeader = entity.getContentEncoding();
 			int mResponseStatusCode = response.getStatusLine().getStatusCode();
 			long fileSizeExpected = entity.getContentLength();
 
@@ -80,12 +86,14 @@ public class FileRetriever extends AsyncTask<String, Integer, File> {
 
 				InputStream inputStream = entity.getContent();
 
-				if (HEADER_ENCODING_TYPE_GZIP.equals(entity.getContentEncoding().getValue())) {
+				if (responseContentEncodingHeader != null && HEADER_ENCODING_TYPE_GZIP.equals(responseContentEncodingHeader.getValue())) {
 					inputStream = new GZIPInputStream(inputStream);
 				}
 
 				downloadedFile = new File(downloadToFilePath);
 				NetworkUtils.copyStreamToFile(inputStream, downloadedFile);
+			} else {
+				throw new HttpException();
 			}
 
 		} catch (FileNotFoundException e) {
@@ -100,6 +108,8 @@ public class FileRetriever extends AsyncTask<String, Integer, File> {
 			mErrorMessageId = R.string.error_illegal_argument_exception;
 		} catch (IOException e) {
 			mErrorMessageId = R.string.error_io_exception;
+		} catch (HttpException e) {
+			mErrorMessageId = R.string.error_http_exception;
 		}
 
 		return downloadedFile;

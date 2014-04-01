@@ -27,5 +27,6 @@
 	<string name="error_unknown_host_exception">Host not found</string>
 	<string name="error_illegal_argument_exception">Invalid URL</string>
 	<string name="error_io_exception">Data read/write error</string>
+	<string name="error_http_exception">Server returned an error</string>
 
 </resources>

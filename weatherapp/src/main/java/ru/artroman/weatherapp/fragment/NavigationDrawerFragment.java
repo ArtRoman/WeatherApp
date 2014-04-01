@@ -253,7 +253,7 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 	private void changeEditMode(boolean isEditEnabled) {
 		isEditModeEnabled = isEditEnabled;
 		if (isEditModeEnabled) {
-			alert(R.string.navdrawer_select_to_delete);
+			Toast.makeText(getActivity(), R.string.navdrawer_select_to_delete, Toast.LENGTH_SHORT).show();
 		}
 		getActivity().supportInvalidateOptionsMenu();
 	}
@@ -276,7 +276,6 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 
 	public void removeCityFromNavigationDrawer(long id) {
 		mDbHelper.removeCityFromNavigation(id);
-		alert("City removed");
 		updateNavigationData();
 	}
 
@@ -298,14 +297,5 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 		 * Called when an item in the navigation drawer is selected.
 		 */
 		void onNavigationDrawerItemSelected(int itemId);
-	}
-
-
-	private void alert(int resourceString) {
-		alert(getString(resourceString));
-	}
-
-	private void alert(String text) {
-		Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
 	}
 }
