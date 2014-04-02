@@ -1,4 +1,4 @@
-package ru.artroman.weatherapp.network;
+package ru.artroman.weatherapp.streams;
 
 import android.app.Activity;
 import android.os.AsyncTask;

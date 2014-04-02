@@ -16,7 +16,7 @@ import ru.artroman.weatherapp.dialog.AddCityDialog;
 import ru.artroman.weatherapp.dialog.PromtRemoveCityDialog;
 import ru.artroman.weatherapp.fragment.MainContentFragment;
 import ru.artroman.weatherapp.fragment.NavigationDrawerFragment;
-import ru.artroman.weatherapp.network.FileRetriever;
+import ru.artroman.weatherapp.streams.FileRetriever;
 
 import java.io.File;
 
