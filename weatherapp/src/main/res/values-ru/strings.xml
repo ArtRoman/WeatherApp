@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<string name="app_name">Погода</string>
+
 	<string name="navigation_drawer_open">Открыть панель навигации</string>
 	<string name="navigation_drawer_close">Закрыть панель навигации</string>
 
@@ -17,6 +19,7 @@
 	<string name="dialog_remove_city_title">Удалить город</string>
 	<string name="dialog_remove_city">Удалить город \'%1$s\' из списка?</string>
 	<string name="dialog_remove_city_toast_removed">Город %1$s удалён из списка</string>
+	<string name="dialog_remove_city_illegal">В списке должен оставаться хотя бы один город</string>
 
 	<string name="error_file_not_found_exception">Файл не найден</string>
 	<string name="error_clien_protocol_exception">Ошибка подключения</string>

@@ -1,4 +1,4 @@
-package ru.artroman.weatherapp.streams;
+package ru.artroman.weatherapp.utils;
 
 import android.os.AsyncTask;
 import org.simpleframework.xml.core.Persister;

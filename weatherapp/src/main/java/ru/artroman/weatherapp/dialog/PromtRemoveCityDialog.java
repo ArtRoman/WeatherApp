@@ -15,10 +15,11 @@ public class PromtRemoveCityDialog extends DialogFragment implements DialogInter
 	private PromtRemoveCityDialogListener mListener;
 	private long navigationItemToRemove;
 	private String cityNameToRemove;
+	private DB mDbHelper;
 
 	public PromtRemoveCityDialog(long id) {
 		navigationItemToRemove = id;
-		DB mDbHelper = new DB(getActivity());
+		mDbHelper = new DB(getActivity());
 		int cityId = mDbHelper.getCityInNavigation((int) id);
 		cityNameToRemove = mDbHelper.getCityNameByCityId(cityId);
 	}
@@ -37,14 +38,19 @@ public class PromtRemoveCityDialog extends DialogFragment implements DialogInter
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		int citiesInNavigationCount = mDbHelper.getAllNavigationCitiesCursor().getCount();
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.dialog_remove_city_title);
-		String messageToDisplay = String.format(getString(R.string.dialog_remove_city), cityNameToRemove);
-		builder.setMessage(messageToDisplay);
-		builder.setPositiveButton(android.R.string.ok, this);
 		builder.setNegativeButton(android.R.string.cancel, this);
 
+		if (citiesInNavigationCount > 1) {
+			String messageToDisplay = String.format(getString(R.string.dialog_remove_city), cityNameToRemove);
+			builder.setMessage(messageToDisplay);
+			builder.setPositiveButton(android.R.string.ok, this);
+		} else {
+			builder.setMessage(R.string.dialog_remove_city_illegal);
+		}
 		return builder.create();
 	}
 

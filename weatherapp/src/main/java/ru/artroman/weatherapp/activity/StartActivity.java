@@ -16,7 +16,8 @@ import ru.artroman.weatherapp.dialog.AddCityDialog;
 import ru.artroman.weatherapp.dialog.PromtRemoveCityDialog;
 import ru.artroman.weatherapp.fragment.MainContentFragment;
 import ru.artroman.weatherapp.fragment.NavigationDrawerFragment;
-import ru.artroman.weatherapp.streams.FileRetriever;
+import ru.artroman.weatherapp.utils.FileRetriever;
+import ru.artroman.weatherapp.utils.NetworkUtils;
 
 import java.io.File;
 
@@ -120,6 +121,14 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	 */
 	@Override
 	public void onDialogPositiveClick(PromtRemoveCityDialog dialog, long id) {
+		// Delete cache file of deleted city
+		int cityId = mDbHelper.getCityInNavigation((int) id);
+		String cacheFilePath = NetworkUtils.getCacheFilePathByCityId(this, cityId);
+		File cacheFile = new File(cacheFilePath);
+		if (cacheFile.exists()) {
+			cacheFile.delete();
+		}
+
 		mNavigationDrawerFragment.removeCityFromNavigationDrawer(id);
 	}
 

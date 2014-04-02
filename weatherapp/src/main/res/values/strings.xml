@@ -19,6 +19,7 @@
 	<string name="dialog_remove_city_title">Remove city</string>
 	<string name="dialog_remove_city">Remove \'%1$s\' city?</string>
 	<string name="dialog_remove_city_toast_removed">City %1$s removed from list</string>
+	<string name="dialog_remove_city_illegal">Can\'t remove all cities from list</string>
 
 	<string name="error_file_not_found_exception">File not found</string>
 	<string name="error_clien_protocol_exception">Connection error</string>

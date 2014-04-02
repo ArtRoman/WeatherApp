@@ -1,4 +1,4 @@
-package ru.artroman.weatherapp.streams;
+package ru.artroman.weatherapp.utils;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -15,7 +15,6 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import ru.artroman.weatherapp.R;
-import ru.artroman.weatherapp.utils.NetworkUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;

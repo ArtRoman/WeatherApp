@@ -53,6 +53,16 @@ public class DB {
 				" on " + DB_TABLE_NAVIGATION_CONTENT + "." + NAVIGATION_COLUMN_CITY_ID + " = " + DB_TABLE_CITIES + "." + CITIES_COLUMN_CITY_ID, null);
 	}
 
+	public int getFirstCityIdFromNavigation() {
+		int cityId = 0;
+		String[] selectColumns = new String[]{NAVIGATION_COLUMN_CITY_ID};
+		Cursor cursor = mDB.query(DB_TABLE_NAVIGATION_CONTENT, selectColumns, null, null, null, null, null);
+		if (cursor.getCount() > 0) {
+			cursor.moveToFirst();
+			cityId = cursor.getInt(0);
+		}
+		return cityId;
+	}
 
 	public String getCityNameByCityId(int cityId) {
 		String cityName = "";

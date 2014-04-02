@@ -15,8 +15,8 @@ import android.widget.TextView;
 import ru.artroman.weatherapp.R;
 import ru.artroman.weatherapp.activity.StartActivity;
 import ru.artroman.weatherapp.db.DB;
-import ru.artroman.weatherapp.streams.FileRetriever;
-import ru.artroman.weatherapp.streams.XmlParser;
+import ru.artroman.weatherapp.utils.FileRetriever;
+import ru.artroman.weatherapp.utils.XmlParser;
 import ru.artroman.weatherapp.utils.NetworkUtils;
 import ru.yandex.weather.forecast.Day;
 import ru.yandex.weather.forecast.DayPart;
@@ -65,6 +65,10 @@ public class MainContentFragment extends Fragment implements SwipeRefreshLayout.
 
 		DB db = new DB(getActivity());
 		mSelectedCityId = db.getCityInNavigation(navigationItemId);
+		if(mSelectedCityId<0){
+			// city not exists
+			mSelectedCityId = db.getFirstCityIdFromNavigation();
+		}
 
 		mSwipeRefreshLayout = (SwipeRefreshLayout) mRootView.findViewById(R.id.swipe_refresh_container);
 		mSwipeRefreshLayout.setColorScheme(android.R.color.holo_green_light, android.R.color.holo_red_light, android.R.color.holo_blue_dark, android.R.color.holo_orange_dark);
