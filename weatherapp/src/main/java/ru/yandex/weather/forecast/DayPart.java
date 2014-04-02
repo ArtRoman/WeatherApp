@@ -52,7 +52,7 @@ import org.simpleframework.xml.Root;
  * &lt;/complexType>
  * </pre>
  */
-@Root
+@Root(name = "day_part")
 public class DayPart {
 
 	@Element(required = false)

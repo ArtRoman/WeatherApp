@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 
 public class PreferenceUtils {
 
-	public final static String SCROLL_POSITION = "viewpager_scroll_position";
 	public final static String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 	public final static String PREF_LAST_CITY_SELECTED= "navigation_last_city_selected";
 

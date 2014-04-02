@@ -24,9 +24,9 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 		AddCityDialog.AddCityDialogListener, PromtRemoveCityDialog.PromtRemoveCityDialogListener, FileRetriever.OnDownloadCompleteListener {
 
 	private NavigationDrawerFragment mNavigationDrawerFragment;
+	private OnDataUpdateListener mListener;
 	private CharSequence mTitle;
 	private DB mDbHelper;
-	private OnDataUpdateListener mListener;
 
 
 	@Override
@@ -68,7 +68,7 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	}
 
 	/**
-	 * Handling ActionBar menu items
+	 * Handling ActionBar items
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -98,7 +98,7 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	}
 
 	/**
-	 * Dialogs listeners
+	 * AddCityDialogListener dialogs listener
 	 */
 	@Override
 	public void onDialogPositiveClick(AddCityDialog dialog, String inputTextValue) {
@@ -115,6 +115,9 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 
 	}
 
+	/**
+	 * PromtRemoveCityDialogListener dialogs listener
+	 */
 	@Override
 	public void onDialogPositiveClick(PromtRemoveCityDialog dialog, long id) {
 		mNavigationDrawerFragment.removeCityFromNavigationDrawer(id);
@@ -130,16 +133,12 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	 */
 	@Override
 	public void onDownloadSuccess(File downloadedFile) {
-		pushForecastDataToFragment();
+		mListener.onDataUpdateCompleted();
 	}
 
 	@Override
 	public void onDownloadError(int errorMessageId) {
 		Toast.makeText(getApplication(), errorMessageId, Toast.LENGTH_SHORT).show();
-		mListener.onDataUpdateCompleted();
-	}
-
-	private void pushForecastDataToFragment() {
 		mListener.onDataUpdateCompleted();
 	}
 

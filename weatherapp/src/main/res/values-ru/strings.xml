@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="navigation_drawer_open">Открыть панель навигации</string>
+	<string name="navigation_drawer_close">Закрыть панель навигации</string>
+
+	<string name="action_refresh">Обновить</string>
+	<string name="action_add_city">Добавить горд</string>
+	<string name="action_edit">Редактировать</string>
+	<string name="action_edit_done">Готово</string>
+	<string name="navdrawer_select_to_delete">Выберите элемент для удаления</string>
+
+	<string name="dialog_add_city_title">Добавить город</string>
+	<string name="dialog_add_city_hint">Введите название города</string>
+	<string name="dialog_add_city_not_found">Город не найден, попробуйте ещё раз</string>
+
+	<string name="dialog_remove_city_title">Удалить город</string>
+	<string name="dialog_remove_city">Удалить город \'%1$s\' из списка?</string>
+	<string name="dialog_remove_city_toast_removed">Город %1$s удалён из списка</string>
+
+	<string name="error_file_not_found_exception">Файл не найден</string>
+	<string name="error_clien_protocol_exception">Ошибка подключения</string>
+	<string name="error_connect_timeout_exception">Время ожидания истекло</string>
+	<string name="error_unknown_host_exception">Сервер не найден</string>
+	<string name="error_illegal_argument_exception">Некорректный запрос</string>
+	<string name="error_io_exception">Ошибка чтения/записи</string>
+	<string name="error_http_exception">Сервер сообщил об ошибке</string>
+
+	<string name="main_temperature_template">%1$s°</string>
+	<string name="main_title_wind">Ветер:</string>
+	<string name="main_title_humidity">Влажность:</string>
+	<string name="main_title_pressure">Давление:</string>
+	<string name="main_wind_template">%1$s м/с</string>
+	<string name="main_humidity_template">%1$s%%</string>
+	<string name="main_pressure_template">%1$s мм рт.ст.</string>
+	<string name="main_next_day_temp_template">%1$s° … %2$s°</string>
+
+	<string name="main_label_night">Ночь</string>
+	<string name="main_label_morning">Утро</string>
+	<string name="main_label_day">День</string>
+	<string name="main_label_evening">Вечер</string>
+
+	<string-array name="day_of_week_names">
+		<item>Воскресенье</item>
+		<item>Понедельник</item>
+		<item>Вторник</item>
+		<item>Среда</item>
+		<item>Четверг</item>
+		<item>Пятница</item>
+		<item>Суббота</item>
+	</string-array>
+
+	<string-array name="month_names">
+		<item>января</item>
+		<item>фервраля</item>
+		<item>марта</item>
+		<item>апреля</item>
+		<item>мая</item>
+		<item>июня</item>
+		<item>июля</item>
+		<item>августа</item>
+		<item>сентября</item>
+		<item>октября</item>
+		<item>ноября</item>
+		<item>декабря</item>
+	</string-array>
+
+</resources>

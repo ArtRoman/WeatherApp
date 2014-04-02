@@ -19,7 +19,7 @@ import org.simpleframework.xml.Root;
  * &lt;/complexType>
  * </pre>
  */
-@Root
+@Root(name = "weather_condition")
 public class WeatherCondition {
 
 	@Attribute(required = false)

@@ -20,7 +20,7 @@ import org.simpleframework.xml.Text;
  * &lt;/complexType>
  * </pre>
  */
-@Root
+@Root(name = "moon_phase")
 public class MoonPhase {
 
 	@Text(required = false)

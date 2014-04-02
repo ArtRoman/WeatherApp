@@ -20,7 +20,7 @@ import org.simpleframework.xml.Text;
  * &lt;/complexType>
  * </pre>
  */
-@Root
+@Root(name = "mslp_pressure")
 public class MslpPressure {
 
 	@Text(required = false)

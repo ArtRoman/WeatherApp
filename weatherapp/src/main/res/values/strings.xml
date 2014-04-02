@@ -9,7 +9,6 @@
 	<string name="action_refresh">Refresh</string>
 	<string name="action_add_city">Add city</string>
 	<string name="action_edit">Edit list</string>
-	<string name="action_remove">Remove item</string>
 	<string name="action_edit_done">Done</string>
 	<string name="navdrawer_select_to_delete">Select item to delete</string>
 
@@ -25,8 +24,47 @@
 	<string name="error_clien_protocol_exception">Connection error</string>
 	<string name="error_connect_timeout_exception">Connection time out</string>
 	<string name="error_unknown_host_exception">Host not found</string>
-	<string name="error_illegal_argument_exception">Invalid URL</string>
+	<string name="error_illegal_argument_exception">Invalid request</string>
 	<string name="error_io_exception">Data read/write error</string>
 	<string name="error_http_exception">Server returned an error</string>
+
+	<string name="main_temperature_template">%1$s°</string>
+	<string name="main_title_wind">Wind:</string>
+	<string name="main_title_humidity">Humidity:</string>
+	<string name="main_title_pressure">Pressure:</string>
+	<string name="main_wind_template">%1$s m/s</string>
+	<string name="main_humidity_template">%1$s%%</string>
+	<string name="main_pressure_template">%1$s mmHg</string>
+	<string name="main_next_day_temp_template">%1$s° … %2$s°</string>
+
+	<string name="main_label_night">Night</string>
+	<string name="main_label_morning">Morning</string>
+	<string name="main_label_day">Day</string>
+	<string name="main_label_evening">Evening</string>
+
+	<string-array name="day_of_week_names">
+		<item>Sunday</item>
+		<item>Monday</item>
+		<item>Thursday</item>
+		<item>Wednesday</item>
+		<item>Thursday</item>
+		<item>Friday</item>
+		<item>Saturday</item>
+	</string-array>
+
+	<string-array name="month_names">
+		<item>января</item>
+		<item>фервраля</item>
+		<item>марта</item>
+		<item>апреля</item>
+		<item>мая</item>
+		<item>июня</item>
+		<item>июля</item>
+		<item>августа</item>
+		<item>сентября</item>
+		<item>октября</item>
+		<item>ноября</item>
+		<item>декабря</item>
+	</string-array>
 
 </resources>

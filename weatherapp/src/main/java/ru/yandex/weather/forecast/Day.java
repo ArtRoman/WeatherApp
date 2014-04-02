@@ -24,7 +24,7 @@ import java.util.List;
  *         &lt;element ref="{http://weather.yandex.ru/forecast}moon_phase"/>
  *         &lt;element ref="{http://weather.yandex.ru/forecast}moonrise"/>
  *         &lt;element ref="{http://weather.yandex.ru/forecast}moonset"/>
- *         &lt;element ref="{http://weather.yandex.ru/forecast}day_part" maxOccurs="unbounded"/>
+ *         &lt;element ref="{http://weather.yandex.ru/forecast}dayPart" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *       &lt;attribute name="date" use="required" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
  *     &lt;/restriction>

@@ -73,7 +73,9 @@ public class AddCityDialog extends DialogFragment implements DialogInterface.OnC
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		inputTextValue = (String) parent.getAdapter().getItem(position);
+		if (position > 0) {
+			inputTextValue = (String) parent.getAdapter().getItem(position);
+		}
 	}
 
 	@Override

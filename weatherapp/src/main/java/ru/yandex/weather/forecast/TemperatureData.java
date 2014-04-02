@@ -25,7 +25,7 @@ import org.simpleframework.xml.Root;
  * &lt;/complexType>
  * </pre>
  */
-@Root
+@Root(name = "temperature_data")
 public class TemperatureData {
 
 	@Element(required = false)

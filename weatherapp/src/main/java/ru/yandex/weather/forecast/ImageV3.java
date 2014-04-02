@@ -20,7 +20,7 @@ import org.simpleframework.xml.Text;
  * &lt;/complexType>
  * </pre>
  */
-@Root
+@Root(name = "image-v3")
 public class ImageV3 {
 
 	@Text(required = false)

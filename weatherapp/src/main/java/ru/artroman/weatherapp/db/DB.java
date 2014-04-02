@@ -47,13 +47,7 @@ public class DB {
 		}
 	}
 
-
-	public Cursor getAllCitiesCursor() {
-		return mDB.query(DB_TABLE_CITIES, null, null, null, null, null, null);
-	}
-
 	public Cursor getAllNavigationCitiesCursor() {
-		//return mDB.query(DB_TABLE_NAVIGATION_CONTENT, null, null, null, null, null, null);
 		return mDB.rawQuery("select " + DB_TABLE_NAVIGATION_CONTENT + "." + CITIES_COLUMN_ID + ", " + CITIES_COLUMN_CITY_NAME +
 				" from " + DB_TABLE_NAVIGATION_CONTENT + " join " + DB_TABLE_CITIES +
 				" on " + DB_TABLE_NAVIGATION_CONTENT + "." + NAVIGATION_COLUMN_CITY_ID + " = " + DB_TABLE_CITIES + "." + CITIES_COLUMN_CITY_ID, null);
