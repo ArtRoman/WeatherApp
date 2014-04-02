@@ -12,7 +12,7 @@
 
 	<string name="dialog_add_city_title">Добавить город</string>
 	<string name="dialog_add_city_hint">Введите название города</string>
-	<string name="dialog_add_city_not_found">Город не найден, попробуйте ещё раз</string>
+	<string name="dialog_add_city_not_found">Указанный город не найден</string>
 
 	<string name="dialog_remove_city_title">Удалить город</string>
 	<string name="dialog_remove_city">Удалить город \'%1$s\' из списка?</string>

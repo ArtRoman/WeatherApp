@@ -101,7 +101,7 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	 * AddCityDialogListener dialogs listener
 	 */
 	@Override
-	public void onDialogPositiveClick(AddCityDialog dialog, String inputTextValue) {
+	public void onDialogPositiveClick(String inputTextValue) {
 		int cityId = mDbHelper.getCityIdByCityName(inputTextValue);
 		if (cityId < 0) {
 			Toast.makeText(this, R.string.dialog_add_city_not_found, Toast.LENGTH_SHORT).show();
@@ -111,7 +111,7 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	}
 
 	@Override
-	public void onDialogNegativeClick(AddCityDialog dialog) {
+	public void onDialogNegativeClick() {
 
 	}
 

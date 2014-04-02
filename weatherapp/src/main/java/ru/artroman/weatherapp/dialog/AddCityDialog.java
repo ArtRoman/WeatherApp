@@ -8,15 +8,18 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 import ru.artroman.weatherapp.R;
 import ru.artroman.weatherapp.db.DB;
 
-public class AddCityDialog extends DialogFragment implements DialogInterface.OnClickListener, AdapterView.OnItemClickListener, TextWatcher {
+public class AddCityDialog extends DialogFragment implements DialogInterface.OnClickListener, AdapterView.OnItemClickListener, TextWatcher, TextView.OnEditorActionListener {
 
 	private static String[] cityNamesArray;
 	private AddCityDialogListener mListener;
@@ -51,26 +54,33 @@ public class AddCityDialog extends DialogFragment implements DialogInterface.OnC
 		if (dialogView != null) {
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, cityNamesArray);
 			AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) dialogView.findViewById(R.id.dialog_textview_city_name);
-			autoCompleteTextView.setAdapter(adapter);
+			autoCompleteTextView.setOnEditorActionListener(this);
 			autoCompleteTextView.setOnItemClickListener(this);
 			autoCompleteTextView.addTextChangedListener(this);
+			autoCompleteTextView.setAdapter(adapter);
 		}
 
 		return builder.create();
 	}
 
+	/**
+	 * Listen dialog buttons
+	 */
 	@Override
 	public void onClick(DialogInterface dialog, int id) {
 		switch (id) {
 			case DialogInterface.BUTTON_POSITIVE:
-				mListener.onDialogPositiveClick(this, inputTextValue);
+				mListener.onDialogPositiveClick(inputTextValue);
 				break;
 			case DialogInterface.BUTTON_NEGATIVE:
-				mListener.onDialogNegativeClick(this);
+				mListener.onDialogNegativeClick();
 				break;
 		}
 	}
 
+	/**
+	 * Listen AutoComplete items click
+	 */
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		if (position > 0) {
@@ -78,6 +88,9 @@ public class AddCityDialog extends DialogFragment implements DialogInterface.OnC
 		}
 	}
 
+	/**
+	 * Listen text change of TextInput view
+	 */
 	@Override
 	public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
 
@@ -93,11 +106,24 @@ public class AddCityDialog extends DialogFragment implements DialogInterface.OnC
 		inputTextValue = editable.toString().trim();
 	}
 
+	/**
+	 * Listen IME action buttons events
+	 */
+	@Override
+	public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
+		if (actionId == EditorInfo.IME_ACTION_DONE) {
+			mListener.onDialogPositiveClick(inputTextValue);
+			dismiss();
+			return true;
+		}
+		return false;
+	}
+
 
 	public interface AddCityDialogListener {
 
-		public void onDialogPositiveClick(AddCityDialog dialog, String inputTextValue);
+		public void onDialogPositiveClick(String inputTextValue);
 
-		public void onDialogNegativeClick(AddCityDialog dialog);
+		public void onDialogNegativeClick();
 	}
 }

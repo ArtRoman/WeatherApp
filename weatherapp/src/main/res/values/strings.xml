@@ -14,7 +14,7 @@
 
 	<string name="dialog_add_city_title">Add city</string>
 	<string name="dialog_add_city_hint">Enter city name</string>
-	<string name="dialog_add_city_not_found">City not found, try again</string>
+	<string name="dialog_add_city_not_found">City not found</string>
 
 	<string name="dialog_remove_city_title">Remove city</string>
 	<string name="dialog_remove_city">Remove \'%1$s\' city?</string>

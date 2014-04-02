@@ -3,6 +3,7 @@
 -dontpreverify
 -ignorewarnings
 -optimizations !code/simplification/arithmetic,!field/*,!code/allocation/variable
+-keepattributes *Annotation*
 
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
@@ -14,3 +15,9 @@
 -keep public class * extends android.app.backup.BackupAgentHelper
 -keep public class * extends com.google.inject.AbstractModule
 -keep public class com.android.vending.licensing.ILicensingService
+
+-keep class org.simpleframework.**{ *; }
+-keep class org.simpleframework.xml.**{ *; }
+-keep class org.simpleframework.xml.core.**{ *; }
+-keep class org.simpleframework.xml.util.**{ *; }
+-keep class ru.yandex.weather.forecast.**{ *; }
