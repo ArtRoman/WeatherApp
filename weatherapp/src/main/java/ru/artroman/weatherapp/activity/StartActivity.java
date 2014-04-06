@@ -84,7 +84,7 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int actionId = item.getItemId();
-		if (actionId == R.id.action_refresh) {
+		if (actionId == R.id.action_refresh && mListener != null) {
 			mListener.onDataUpdateRequested();
 			return true;
 		}
@@ -148,7 +148,9 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	@Override
 	public void onDownloadError(int errorMessageId) {
 		Toast.makeText(getApplication(), errorMessageId, Toast.LENGTH_SHORT).show();
-		mListener.onDataUpdateCompleted();
+		if (mListener != null) {
+			mListener.onDataUpdateCompleted();
+		}
 	}
 
 

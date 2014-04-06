@@ -54,18 +54,18 @@
 	</string-array>
 
 	<string-array name="month_names">
-		<item>января</item>
-		<item>фервраля</item>
-		<item>марта</item>
-		<item>апреля</item>
-		<item>мая</item>
-		<item>июня</item>
-		<item>июля</item>
-		<item>августа</item>
-		<item>сентября</item>
-		<item>октября</item>
-		<item>ноября</item>
-		<item>декабря</item>
+		<item>january</item>
+		<item>february</item>
+		<item>march</item>
+		<item>april</item>
+		<item>may</item>
+		<item>june</item>
+		<item>july</item>
+		<item>august</item>
+		<item>september</item>
+		<item>october</item>
+		<item>november</item>
+		<item>december</item>
 	</string-array>
 
 </resources>

@@ -44,7 +44,9 @@ public class XmlParser extends AsyncTask<File, Void, Forecast> {
 
 	@Override
 	protected void onPostExecute(Forecast forecast) {
-		mListener.onParseCompleted(forecast);
+		if (mListener != null) {
+			mListener.onParseCompleted(forecast);
+		}
 	}
 
 

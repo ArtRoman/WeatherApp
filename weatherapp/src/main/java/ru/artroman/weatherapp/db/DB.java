@@ -10,27 +10,28 @@ import ru.artroman.weatherapp.R;
 public class DB {
 
 	private static final String DB_NAME = "weather.db";
-	private static final int DB_VERSION = 1;
+	private static final int DB_VERSION = 2;
 
 	public static final String DB_TABLE_CITIES = "cities";
-	public static final String DB_TABLE_NAVIGATION_CONTENT = "navigation";
-
 
 	public static final String CITIES_COLUMN_ID = "_id";
 	public static final String CITIES_COLUMN_CITY_ID = "city_id";
 	public static final String CITIES_COLUMN_CITY_NAME = "city_name";
+	public static final String CITIES_COLUMN_CITY_NAME_UPPER = "city_name_upper";
+
+	public static final String DB_TABLE_NAVIGATION_CONTENT = "navigation";
 
 	public static final String NAVIGATION_COLUMN_ID = "_id";
 	public static final String NAVIGATION_COLUMN_CITY_ID = "city_id";
 
-	private static final String DB_CREATE_CITIES = "create table " + DB_TABLE_CITIES +
-			"(" +
+
+	private static final String DB_CREATE_CITIES = "create table " + DB_TABLE_CITIES + "(" +
 			CITIES_COLUMN_ID + " integer primary key autoincrement, " +
 			CITIES_COLUMN_CITY_ID + " integer, " +
-			CITIES_COLUMN_CITY_NAME + " text" +
+			CITIES_COLUMN_CITY_NAME + " text, " +
+			CITIES_COLUMN_CITY_NAME_UPPER + " text" +
 			");";
-	private static final String DB_CREATE_NAVIGATION = "create table " + DB_TABLE_NAVIGATION_CONTENT +
-			" (" +
+	private static final String DB_CREATE_NAVIGATION = "create table " + DB_TABLE_NAVIGATION_CONTENT + " (" +
 			NAVIGATION_COLUMN_ID + " integer primary key autoincrement," +
 			NAVIGATION_COLUMN_CITY_ID + " integer" +
 			");";
@@ -80,8 +81,8 @@ public class DB {
 	public int getCityIdByCityName(String cityName) {
 		int cityId = -1;
 		String[] selectColumns = new String[]{CITIES_COLUMN_CITY_ID};
-		String selection = CITIES_COLUMN_CITY_NAME + " = ?";
-		String[] selectionArgs = new String[]{cityName};
+		String selection = CITIES_COLUMN_CITY_NAME_UPPER + " = ?";
+		String[] selectionArgs = new String[]{cityName.toUpperCase()};
 		Cursor cursor = mDB.query(DB_TABLE_CITIES, selectColumns, selection, selectionArgs, null, null, null);
 		if (cursor.getCount() > 0) {
 			cursor.moveToFirst();
@@ -148,29 +149,48 @@ public class DB {
 			db.execSQL(DB_CREATE_CITIES);
 			db.execSQL(DB_CREATE_NAVIGATION);
 
+			insertDefaultCitiesContent(db);
+			insertDefaultNavigationContent(db);
+		}
+
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			switch (newVersion) {
+				case 2:
+					// drop cities table
+					db.execSQL("drop table " + DB_TABLE_CITIES);
+					// create cities table
+					db.execSQL(DB_CREATE_CITIES);
+					// and insert default data
+					insertDefaultCitiesContent(db);
+					break;
+			}
+		}
+
+
+		private void insertDefaultCitiesContent(SQLiteDatabase db) {
 			int[] allCitiesIdsArray = mContext.getResources().getIntArray(R.array.cities_ids);
 			String[] allCitiesNamesArray = mContext.getResources().getStringArray(R.array.cities_names);
-			int[] defaultNavigationArray = mContext.getResources().getIntArray(R.array.default_navigation_ids);
 
 			// Put all data to DB
 			ContentValues cv = new ContentValues();
 			for (int i = 0; i < allCitiesIdsArray.length; i++) {
 				cv.put(CITIES_COLUMN_CITY_ID, allCitiesIdsArray[i]);
 				cv.put(CITIES_COLUMN_CITY_NAME, allCitiesNamesArray[i]);
+				cv.put(CITIES_COLUMN_CITY_NAME_UPPER, allCitiesNamesArray[i].toUpperCase());
 				db.insert(DB_TABLE_CITIES, null, cv);
 			}
+		}
+
+		private void insertDefaultNavigationContent(SQLiteDatabase db) {
+			int[] defaultNavigationArray = mContext.getResources().getIntArray(R.array.default_navigation_ids);
 
 			// Add default cities
-			cv = new ContentValues();
+			ContentValues cv = new ContentValues();
 			for (int aDefaultNavigationArray : defaultNavigationArray) {
 				cv.put(NAVIGATION_COLUMN_CITY_ID, aDefaultNavigationArray);
 				db.insert(DB_TABLE_NAVIGATION_CONTENT, null, cv);
 			}
-		}
-
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
 		}
 	}
 }

@@ -16,8 +16,8 @@ import ru.artroman.weatherapp.R;
 import ru.artroman.weatherapp.activity.StartActivity;
 import ru.artroman.weatherapp.db.DB;
 import ru.artroman.weatherapp.utils.FileRetriever;
-import ru.artroman.weatherapp.utils.XmlParser;
 import ru.artroman.weatherapp.utils.NetworkUtils;
+import ru.artroman.weatherapp.utils.XmlParser;
 import ru.yandex.weather.forecast.Day;
 import ru.yandex.weather.forecast.DayPart;
 import ru.yandex.weather.forecast.Forecast;
@@ -65,7 +65,7 @@ public class MainContentFragment extends Fragment implements SwipeRefreshLayout.
 
 		DB db = new DB(getActivity());
 		mSelectedCityId = db.getCityInNavigation(navigationItemId);
-		if(mSelectedCityId<0){
+		if (mSelectedCityId < 0) {
 			// city not exists
 			mSelectedCityId = db.getFirstCityIdFromNavigation();
 		}
@@ -148,71 +148,12 @@ public class MainContentFragment extends Fragment implements SwipeRefreshLayout.
 			if (i == 0) {
 				// Current day
 				for (DayPart dayPart : dayPartsList) {
-					String temperature;
-					Temperature temp = dayPart.getTemperature();
-					if (temp != null) {
-						temperature = formatTemperature(temp.getContent());
-					} else {
-						// Use middle value
-						temperature = formatTemperature(dayPart.getTemperatureFrom(), dayPart.getTemperatureTo());
-					}
-					String temperatureFormatted = String.format(getString(R.string.main_temperature_template), temperature);
-					if ("morning".equals(dayPart.getType())) {
-						setText(R.id.main_text_daypart1, temperatureFormatted);
-					} else if ("day".equals(dayPart.getType())) {
-						setText(R.id.main_text_daypart2, temperatureFormatted);
-					} else if ("evening".equals(dayPart.getType())) {
-						setText(R.id.main_text_daypart3, temperatureFormatted);
-					} else if ("night".equals(dayPart.getType())) {
-						setText(R.id.main_text_daypart4, temperatureFormatted);
-					}
+					updateUiSetDayPartData(dayPart);
 				}
 
 			} else if (i < 8) {
 				// Next days are shown as list
-				Date date = parseDate(day.getDate(), DAY_DATE_FORMAT);
-				String friendlyDate = getUserFriendlyDate(date);
-				String dayOfWeek = getDayOfWeekByDate(date);
-				String tempDay = null;
-				String tempNight = null;
-				for (DayPart dayPart : dayPartsList) {
-					if ("day_short".equals(dayPart.getType())) {
-						tempDay = formatTemperature(dayPart.getTemperature().getContent());
-					} else if ("night_short".equals(dayPart.getType())) {
-						tempNight = formatTemperature(dayPart.getTemperature().getContent());
-					}
-				}
-				String formattedDayTemp = String.format(getString(R.string.main_next_day_temp_template), tempNight, tempDay);
-
-				if (i == 1) {
-					setText(R.id.main_next_day_date_1, friendlyDate);
-					setText(R.id.main_next_day_temp_1, formattedDayTemp);
-					setText(R.id.main_next_day_of_week_1, dayOfWeek);
-				} else if (i == 2) {
-					setText(R.id.main_next_day_date_2, friendlyDate);
-					setText(R.id.main_next_day_temp_2, formattedDayTemp);
-					setText(R.id.main_next_day_of_week_2, dayOfWeek);
-				} else if (i == 3) {
-					setText(R.id.main_next_day_date_3, friendlyDate);
-					setText(R.id.main_next_day_temp_3, formattedDayTemp);
-					setText(R.id.main_next_day_of_week_3, dayOfWeek);
-				} else if (i == 4) {
-					setText(R.id.main_next_day_date_4, friendlyDate);
-					setText(R.id.main_next_day_temp_4, formattedDayTemp);
-					setText(R.id.main_next_day_of_week_4, dayOfWeek);
-				} else if (i == 5) {
-					setText(R.id.main_next_day_date_5, friendlyDate);
-					setText(R.id.main_next_day_temp_5, formattedDayTemp);
-					setText(R.id.main_next_day_of_week_5, dayOfWeek);
-				} else if (i == 6) {
-					setText(R.id.main_next_day_date_6, friendlyDate);
-					setText(R.id.main_next_day_temp_6, formattedDayTemp);
-					setText(R.id.main_next_day_of_week_6, dayOfWeek);
-				} else if (i == 7) {
-					setText(R.id.main_next_day_date_7, friendlyDate);
-					setText(R.id.main_next_day_temp_7, formattedDayTemp);
-					setText(R.id.main_next_day_of_week_7, dayOfWeek);
-				}
+				updateUiSetNextDaysData(day, i);
 
 			} else {
 				// Skip more days
@@ -221,6 +162,73 @@ public class MainContentFragment extends Fragment implements SwipeRefreshLayout.
 		}
 	}
 
+	private void updateUiSetDayPartData(DayPart dayPart) {
+		String temperature;
+		Temperature temp = dayPart.getTemperature();
+		if (temp != null) {
+			temperature = formatTemperature(temp.getContent());
+		} else {
+			// Use middle value
+			temperature = formatTemperature(dayPart.getTemperatureFrom(), dayPart.getTemperatureTo());
+		}
+		String temperatureFormatted = String.format(getString(R.string.main_temperature_template), temperature);
+		if ("morning".equals(dayPart.getType())) {
+			setText(R.id.main_text_daypart1, temperatureFormatted);
+		} else if ("day".equals(dayPart.getType())) {
+			setText(R.id.main_text_daypart2, temperatureFormatted);
+		} else if ("evening".equals(dayPart.getType())) {
+			setText(R.id.main_text_daypart3, temperatureFormatted);
+		} else if ("night".equals(dayPart.getType())) {
+			setText(R.id.main_text_daypart4, temperatureFormatted);
+		}
+	}
+
+	private void updateUiSetNextDaysData(Day day, int dayNumber) {
+		List<DayPart> dayPartsList = day.getDayPart();
+		Date date = parseDate(day.getDate(), DAY_DATE_FORMAT);
+		String friendlyDate = getUserFriendlyDate(date);
+		String dayOfWeek = getDayOfWeekByDate(date);
+		String tempDay = null;
+		String tempNight = null;
+		for (DayPart dayPart : dayPartsList) {
+			if ("day_short".equals(dayPart.getType())) {
+				tempDay = formatTemperature(dayPart.getTemperature().getContent());
+			} else if ("night_short".equals(dayPart.getType())) {
+				tempNight = formatTemperature(dayPart.getTemperature().getContent());
+			}
+		}
+		String formattedDayTemp = String.format(getString(R.string.main_next_day_temp_template), tempNight, tempDay);
+
+		if (dayNumber == 1) {
+			setText(R.id.main_next_day_date_1, friendlyDate);
+			setText(R.id.main_next_day_temp_1, formattedDayTemp);
+			setText(R.id.main_next_day_of_week_1, dayOfWeek);
+		} else if (dayNumber == 2) {
+			setText(R.id.main_next_day_date_2, friendlyDate);
+			setText(R.id.main_next_day_temp_2, formattedDayTemp);
+			setText(R.id.main_next_day_of_week_2, dayOfWeek);
+		} else if (dayNumber == 3) {
+			setText(R.id.main_next_day_date_3, friendlyDate);
+			setText(R.id.main_next_day_temp_3, formattedDayTemp);
+			setText(R.id.main_next_day_of_week_3, dayOfWeek);
+		} else if (dayNumber == 4) {
+			setText(R.id.main_next_day_date_4, friendlyDate);
+			setText(R.id.main_next_day_temp_4, formattedDayTemp);
+			setText(R.id.main_next_day_of_week_4, dayOfWeek);
+		} else if (dayNumber == 5) {
+			setText(R.id.main_next_day_date_5, friendlyDate);
+			setText(R.id.main_next_day_temp_5, formattedDayTemp);
+			setText(R.id.main_next_day_of_week_5, dayOfWeek);
+		} else if (dayNumber == 6) {
+			setText(R.id.main_next_day_date_6, friendlyDate);
+			setText(R.id.main_next_day_temp_6, formattedDayTemp);
+			setText(R.id.main_next_day_of_week_6, dayOfWeek);
+		} else if (dayNumber == 7) {
+			setText(R.id.main_next_day_date_7, friendlyDate);
+			setText(R.id.main_next_day_temp_7, formattedDayTemp);
+			setText(R.id.main_next_day_of_week_7, dayOfWeek);
+		}
+	}
 
 	void initiateDownloadingContentForCurrentCityId() {
 		mSwipeRefreshLayout.setRefreshing(true);

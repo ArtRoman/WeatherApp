@@ -116,6 +116,7 @@ public class FileRetriever extends AsyncTask<String, Integer, File> {
 
 	@Override
 	protected void onPostExecute(File file) {
+		if (mListener == null) return;
 		if (mErrorMessageId != 0) {
 			mListener.onDownloadError(mErrorMessageId);
 		} else {
