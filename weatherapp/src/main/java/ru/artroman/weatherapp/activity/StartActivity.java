@@ -103,6 +103,10 @@ public class StartActivity extends ActionBarActivity implements NavigationDrawer
 	 */
 	@Override
 	public void onDialogPositiveClick(String inputTextValue) {
+		if (inputTextValue == null) {
+			Toast.makeText(this, R.string.dialog_add_city_no_text, Toast.LENGTH_SHORT).show();
+			return;
+		}
 		int cityId = mDbHelper.getCityIdByCityName(inputTextValue);
 		if (cityId < 0) {
 			Toast.makeText(this, R.string.dialog_add_city_not_found, Toast.LENGTH_SHORT).show();
